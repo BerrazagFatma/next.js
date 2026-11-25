@@ -1,0 +1,6 @@
+-- CreateTable
+CREATE TABLE "Settings" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT DEFAULT 1,
+    "seuilAlerte" REAL NOT NULL DEFAULT 0.5,
+    "seuilBlocage" REAL NOT NULL DEFAULT 0.8
+);

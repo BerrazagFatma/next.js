@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model LogEntry {
+  id        Int      @id @default(autoincrement())
+  system    String   // ex. "SSH", "VPN", "Keycloak"
+  ip        String
+  account   String   // le compte visé par la tentative
+  success   Boolean
+  rawLine   String   @unique
+  createdAt DateTime @default(now())
+
+  @@index([ip, createdAt])
+  @@index([account, createdAt])
+}
+
+model Alert {
+  id        Int      @id @default(autoincrement())
+  ip        String
+  type      String
+  score     Float
+  level     String
+  createdAt DateTime @default(now())
+  windowKey String?  @unique
+}
+
+model Proposal {
+  id        Int      @id @default(autoincrement())
+  ip        String
+  score     Float
+  reason    String
+  status    String   @default("en_attente") // en_attente, approuvee, rejetee
+  createdAt DateTime @default(now())
+}
+
+model Rule {
+  id        Int      @id @default(autoincrement())
+  ip        String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+}
+
+model WhitelistEntry {
+  id        Int      @id @default(autoincrement())
+  ip        String   @unique
+  addedBy   String
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  adminId   Int
+  action    String
+  target    String
+  createdAt DateTime @default(now())
+}
+model Settings {
+  id           Int   @id @default(1)
+  seuilAlerte  Float @default(0.5)
+  seuilBlocage Float @default(0.8)
+}
